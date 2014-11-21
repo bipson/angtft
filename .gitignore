@@ -1,0 +1,9 @@
+# project specific ignores
+data/
+config.json
+
+# python specific ignores
+*.pyc
+
+# OS FS ignores
+.DS_Store

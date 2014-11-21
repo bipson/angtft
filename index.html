@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+    </style>
+    <script type="text/javascript">
+      
+    </script>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb64TDRSvYEQ1FuKSNTGuxs2ROc6ytovE&libraries=geometry">
+    </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+    <script type="text/javascript">
+
+      var map;
+
+      function initialize() {
+        var mapOptions = {
+          center: { lat: 48.209461, lng: 16.371602},
+          zoom: 13
+        };
+
+        map = new google.maps.Map(document.getElementById('map-canvas'),
+          mapOptions);
+
+        placeMarkers('delays.json');
+      }
+
+      function placeMarkers(jsonFile) {
+
+        $.ajax({
+          url: "data/delays.json",
+          dataType: "json",
+          success: function(response) {
+
+            // $.each(response.Users, function(item) {
+            //   informationArray.push(item);
+            // });
+            informationArray.push("success");
+          }
+        });
+
+        var origin = new google.maps.LatLng(48.224805, 16.349332);
+        var destination = new google.maps.LatLng(48.213725, 16.362282);
+
+        placeMarker(origin, destination, 330);
+      }
+
+      function updateMarkers() {
+        // map.
+      }
+
+      function calcColorString(temperatureValue) {
+        var value;
+        var red;
+        var green;
+        var blue;
+        temperatureValue = Math.min(temperatureValue, 500)
+        if (temperatureValue >= 30) {
+          red = Math.floor(((temperatureValue-30)*0.321)+104).toString(16);
+          green = Math.floor(((temperatureValue-30)*-0.221)+104).toString(16);
+          if (green.length < 2) {
+            green = "0"+green;
+          }
+          blue = green;
+        } else {
+          red = Math.floor(((temperatureValue)*3.46)).toString(16);
+          green = Math.floor(((temperatureValue)*-5)+255).toString(16);
+          if (red.length < 2) {
+            red = "0"+red;
+          }
+          blue = red;
+        }
+        return "#".concat(red,green,blue)
+      }
+
+      function placeMarker(origin, destination, temperatureValue) {
+
+        var color = calcColorString(temperatureValue);
+
+        var heading = google.maps.geometry.spherical.computeHeading(origin, destination);
+ 
+        var marker = new google.maps.Marker({
+          position: origin,
+          icon: {
+            path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
+            size: null,//size
+            origin: null,//origin
+            // anchor: new google.maps.Point(2, -2), //anchor
+            scale: 2, //
+            rotation: -180 + heading,
+            strokeColor: color
+          },
+          draggable: false,
+          map: map
+        });
+
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+
+      // google.maps.event.addListener(map, 'zoom_changed', updateMarkers);
+    </script>
+  </head>
+  <body>
+<div id="map-canvas"></div>
+  </body>
+</html>
